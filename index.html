@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cricket Live Score</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 30px;
+      border-radius: 10px;
+      display: inline-block;
+      max-width: 500px;
+    }
+    select, button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #score {
+      font-size: 24px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏏 Live Cricket Scoreboard</h1>
+
+    <div>
+      <label for="teamSelect">Select Team:</label>
+      <select id="teamSelect" onchange="changeTeam()">
+        <option value="India">🇮🇳 India</option>
+        <option value="Australia">🇦🇺 Australia</option>
+        <option value="England">🏴 England</option>
+        <option value="Pakistan">🇵🇰 Pakistan</option>
+      </select>
+
+      <label for="formatSelect">Format:</label>
+      <select id="formatSelect" onchange="changeFormat()">
+        <option value="T10">T10</option>
+        <option value="T20">T20</option>
+        <option value="ODI">ODI</option>
+        <option value="Test">Test</option>
+      </select>
+    </div>
+
+    <h2 id="team">🇮🇳 India</h2>
+    <p id="format">Format: T10</p>
+    <p id="score">Score: 0 / 0<br>Overs: 0.0</p>
+
+    <div>
+      <button onclick="addRun(1)">+1 Run</button>
+      <button onclick="addRun(4)">+4 Runs</button>
+      <button onclick="addRun(6)">+6 Runs</button>
+      <button onclick="addDotBall()">Dot Ball</button>
+      <button onclick="addWicket()">Wicket</button>
+      <button onclick="resetMatch()">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let runs = 0;
+    let wickets = 0;
+    let balls = 0;
+    let maxOvers = 10;
+
+    const flagMap = {
+      "India": "🇮🇳",
+      "Australia": "🇦🇺",
+      "England": "🏴",
+      "Pakistan": "🇵🇰"
+    };
+
+    function updateScore() {
+      const overs = Math.floor(balls / 6) + '.' + (balls % 6);
+      document.getElementById("score").innerHTML = `Score: ${runs} / ${wickets}<br>Overs: ${overs}`;
+    }
+
+    function addRun(run) {
+      if (wickets < 10) {
+        runs += run;
+        balls++;
+        checkEnd();
+        updateScore();
+      }
+    }
+
+    function addDotBall() {
+      if (wickets < 10) {
+        balls++;
+        checkEnd();
+        updateScore();
+      }
+    }
+
+    function addWicket() {
+      if (wickets < 10) {
+        wickets++;
+        balls++;
+        checkEnd();
+        updateScore();
+      } else {
+        alert("All out!");
+      }
+    }
+
+    function checkEnd() {
+      if (Math.floor(balls / 6) >= maxOvers || wickets >= 10) {
+        alert("Innings over!");
+      }
+    }
+
+    function resetMatch() {
+      runs = 0;
+      wickets = 0;
+      balls = 0;
+      updateScore();
+    }
+
+    function changeTeam() {
+      const team = document.getElementById("teamSelect").value;
+      document.getElementById("team").innerText = `${flagMap[team]} ${team}`;
+    }
+
+    function changeFormat() {
+      const format = document.getElementById("formatSelect").value;
+      document.getElementById("format").innerText = "Format: " + format;
+      if (format === "T10") maxOvers = 10;
+      else if (format === "T20") maxOvers = 20;
+      else if (format === "ODI") maxOvers = 50;
+      else maxOvers = 90; // Test (First innings)
+      resetMatch();
+    }
+
+    // Initial render
+    updateScore();
+  </script>
+</body>
+</html>
